@@ -1,0 +1,231 @@
+@use "sass:color";
+@use "./variables";
+
+.quicktab {
+  *,
+  ::after,
+  ::before {
+    box-sizing: border-box;
+  }
+
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-height: 222px;
+  background-color: #fff;
+
+  // pen开头的类名可以让鼠标事件不穿透
+  &[class*="pen-"] iframe {
+    pointer-events: none;
+    user-select: none;
+  }
+
+  // 工具栏
+  .tab-bar {
+    display: flex;
+    flex-shrink: 0;
+    height: 38px;
+    padding-left: 0;
+    margin: 0;
+    list-style: none;
+    background-color: inherit;
+    border: 1px solid variables.$border-color;
+    border-right: none;
+
+    // 隐藏工具栏
+    &.hide {
+      display: none;
+    }
+
+    li {
+      height: 100%;
+      border-right: 1px solid variables.$border-color;
+
+      button {
+        display: flex;
+        flex-shrink: 0;
+        flex-wrap: nowrap;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        padding: 0 18px;
+        font-size: 16px;
+        color: #212529;
+        cursor: pointer;
+        user-select: none;
+        background: variables.$white;
+        border: 0;
+        border-radius: 0;
+        outline: none;
+        transition:
+          color 0.15s ease-in-out,
+          background-color 0.15s ease-in-out;
+
+        // 禁用效果
+        &.disabled {
+          color: color.adjust(variables.$white, $blackness: 40%);
+          pointer-events: none;
+          cursor: default;
+          background-color: color.adjust(variables.$white, $blackness: 6%);
+        }
+
+        // svg大小
+        svg {
+          width: 14px;
+          height: 14px;
+          fill: #212529;
+        }
+      }
+
+      // 滚动的li
+      &.scroll {
+        //  fix:滚动无法居中的bug,该css属性必须加上
+        position: relative;
+        display: flex;
+        flex-grow: 1;
+        overflow: auto;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+
+        &::-webkit-scrollbar {
+          display: none;
+        }
+
+        button {
+          position: relative;
+          max-width: 180px;
+          border-right: 1px solid variables.$border-color;
+
+          // 这一块是实现鼠标移入时才显示关闭按钮的样式
+          &.hover {
+            svg {
+              position: absolute;
+              top: 3px;
+              right: 3px;
+              display: none;
+            }
+
+            &:hover {
+              svg {
+                display: inline;
+              }
+            }
+          }
+
+          &::after {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 1px;
+            content: "";
+            background-color: variables.$primary-color;
+            border-radius: 0;
+            transition: all 0.3s;
+          }
+
+          &:hover {
+            color: variables.$primary-color;
+
+            &::after {
+              width: 100%;
+            }
+          }
+
+          &.active {
+            color: variables.$primary-color;
+
+            &::after {
+              width: 100%;
+            }
+          }
+
+          // 按钮文本
+          span {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+          }
+
+          // 关闭按钮
+          svg {
+            flex-shrink: 0;
+            margin-left: 16px;
+            font-size: 12px;
+            border-radius: 50%;
+            fill: #c2c2c2;
+
+            &:hover {
+              background-color: #ff5722;
+              fill: #fff;
+            }
+          }
+        }
+      }
+
+      // 非滚动的li
+      &:not(.scroll) {
+        button {
+          // 鼠标移入的时候变暗5%
+          &:hover {
+            background-color: color.adjust(variables.$white, $blackness: 2%);
+          }
+
+          // 按下变亮10%
+          &:active {
+            background-color: color.adjust(variables.$white, $blackness: 4%);
+          }
+        }
+      }
+    }
+  }
+
+  // 面板容器
+  .tab-body {
+    position: relative;
+    display: flex;
+    flex-grow: 1;
+    padding-left: 0;
+    margin: 0;
+    overflow: hidden;
+    list-style: none;
+    background-color: inherit;
+
+    li {
+      position: absolute;
+      top: -200%;
+      flex: 1;
+      width: 100%;
+      background-color: inherit;
+
+      &.active {
+        position: unset;
+        left: unset;
+      }
+
+      iframe {
+        display: block;
+        width: 100%;
+        height: 100%;
+        border: 0;
+      }
+
+      // 遮罩层
+      .mask {
+        position: absolute;
+        inset: 0;
+        opacity: 1;
+        transition: opacity 800ms;
+
+        .mask-inner {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 100%;
+          height: 100%;
+          background-color: #fff;
+        }
+      }
+    }
+  }
+}
