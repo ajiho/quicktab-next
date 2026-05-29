@@ -5,10 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "vite build --watch",
     "preview": "vite preview"
   },
   "devDependencies": {
+    "lit-html": "^3.3.3",
     "sass-embedded": "^1.100.0",
     "typescript": "~6.0.2",
     "vite": "^8.0.12"
